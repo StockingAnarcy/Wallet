@@ -9,10 +9,12 @@ using (mainContext db = new mainContext())
 {
   
     var wallets = db.WalletDbs.ToList();
-    var operations = db.Operations.ToList(); // получаем объекты из бд и выводим на консоль
+    var operations = db.Operations.ToList(); // получаем объекты из бд и выводим на консоль 
+    
     double? prit = 0;
     double? ott = 0;
-    string? itog;
+    string? itog; 
+
     Console.WriteLine("Нажмите Enter чтобы продолжить");
     if (Console.ReadKey().Key == ConsoleKey.Enter)
     { 
@@ -39,7 +41,7 @@ using (mainContext db = new mainContext())
                 ott = operations.Where(o => o.Vid == operations[i].Vid).Sum(o => o.Summ);
             }
         }
-        itog = $"Поступление: {prit}, Списание: -{ott}, Чистый денежный поток: {prit - ott}";
+        itog = $"Поступление: {prit}\nСписание: {ott}\nЧистый денежный поток: {prit - ott}";
 
         Console.WriteLine("Сохранить в json или показать историю? y/J. Для выхода нажмите N");
         if (Console.ReadKey().Key == ConsoleKey.Y)     //сохраняем в json
@@ -65,11 +67,11 @@ using (mainContext db = new mainContext())
         var options = new JsonSerializerOptions //опции json
         {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-            WriteIndented = true
+            WriteIndented = true,
         };
 
         string jsonString = JsonSerializer.Serialize(wallets, options);
-        File.WriteAllText(fileName, jsonString+itog);
+        File.WriteAllText(fileName, jsonString+"\n"+itog);
 
         Console.WriteLine("\n" + "Сохранено!");
     }
@@ -83,14 +85,12 @@ using (mainContext db = new mainContext())
             {
                 if (w.Id == o.UserId)
                 {
-                    
                     Console.WriteLine($"Дата: {o.Data}  -Поток: {o.Vid}  -Тип: {o.Type}  -Сумма: {o.Summ}");
                 }
             }
         }
 
-        Console.WriteLine("\nИтого:");
-        Console.WriteLine(itog);
+        Console.WriteLine("\nИтого:\n"+itog);
           
         Console.WriteLine("\nСохранить в json? y/n");
         if (Console.ReadKey().Key == ConsoleKey.Y)     //сохраняем в json
@@ -115,10 +115,12 @@ using (mainContext db = new mainContext())
         };
 
         string jsonString = JsonSerializer.Serialize(operations, options);
-        File.WriteAllText(fileName, jsonString + itog);
+        
+        File.WriteAllText(fileName, jsonString);
 
         Console.WriteLine("\n" + "Сохранено!");
     }
-
 }
+
+
 
